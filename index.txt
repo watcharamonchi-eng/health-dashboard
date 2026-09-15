@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Health Dashboard</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+        /* KPI Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .kpi-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .kpi-title {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+        .kpi-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .kpi-unit {
+            font-size: 14px;
+            color: #95a5a6;
+            font-weight: normal;
+        }
+        
+        /* Layout Main Section */
+        .dashboard-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .dashboard-body {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+        }
+        
+        /* Table Style */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        th {
+            background-color: #f8f9fa;
+            color: #7f8c8d;
+        }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-active { background: #e8f8f5; color: #2ecc71; }
+        .badge-rest { background: #fef9e7; color: #f1c40f; }
+
+        /* Chart Canvas */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📊 Dashboard สุขภาพประจำสัปดาห์</h1>
+
+    <!-- สรุป KPI 4 ตัว -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-title">วันออกกำลังกาย</div>
+            <div class="kpi-value" style="color: #2ecc71;">5 / 5 <span class="kpi-unit">วัน</span></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">เวลารวมออกกำลังกาย</div>
+            <div class="kpi-value" style="color: #3498db;">210 <span class="kpi-unit">นาที</span></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">ชั่วโมงนอนเฉลี่ย</div>
+            <div class="kpi-value" style="color: #9b59b6;">6.6 <span class="kpi-unit">ชม./คืน</span></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">น้ำดื่มเฉลี่ย (ปรับแก้)</div>
+            <div class="kpi-value" style="color: #1abc9c;">1.6 <span class="kpi-unit">ลิตร/วัน</span></div>
+        </div>
+    </div>
+
+    <!-- ส่วนเนื้อหาหลัก -->
+    <div class="dashboard-body">
+        <!-- รายการกิจกรรมแต่ละวัน -->
+        <div class="card">
+            <h2>📅 รายการกิจกรรมประจำวัน</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>วันที่</th>
+                        <th>ออกกำลังกาย</th>
+                        <th>นอน</th>
+                        <th>น้ำ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>7 ก.ย. (จ.)</td>
+                        <td><span class="badge badge-active">วิ่ง 30 น.</span></td>
+                        <td>7.2 ชม.</td>
+                        <td>1.8 ล.</td>
+                    </tr>
+                    <tr>
+                        <td>8 ก.ย. (อ.)</td>
+                        <td><span class="badge badge-active">ปั่นจักรยาน 45 น.</span></td>
+                        <td>6.5 ชม.</td>
+                        <td>1.5 ล.</td>
+                    </tr>
+                    <tr>
+                        <td>9 ก.ย. (พ.)</td>
+                        <td><span class="badge badge-rest">พักผ่อน</span></td>
+                        <td>6.5 ชม.</td>
+                        <td>1.5 ล.</td>
+                    </tr>
+                    <tr>
+                        <td>10 ก.ย. (พฤ.)</td>
+                        <td><span class="badge badge-rest">พักผ่อน</span></td>
+                        <td>6.5 ชม.</td>
+                        <td>2.0 ล.</td>
+                    </tr>
+                    <tr>
+                        <td>11 ก.ย. (ศ.)</td>
+                        <td><span class="badge badge-active">ปั่นจักรยาน 45 น.</span></td>
+                        <td>6.5 ชม.</td>
+                        <td>1.5 ล.*</td>
+                    </tr>
+                    <tr>
+                        <td>12 ก.ย. (ส.)</td>
+                        <td><span class="badge badge-active">ปั่นจักรยาน 45 น.</span></td>
+                        <td>6.5 ชม.</td>
+                        <td>1.5 ล.</td>
+                    </tr>
+                    <tr>
+                        <td>13 ก.ย. (อา.)</td>
+                        <td><span class="badge badge-active">ปั่นจักรยาน 45 น.</span></td>
+                        <td>6.5 ชม.</td>
+                        <td>1.5 ล.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="font-size: 11px; color: #95a5a6; margin-top: 10px;">* ปรับแก้จากข้อมูลพิมพ์ผิด (15 ลิตร -> 1.5 ลิตร) เพื่อการคำนวณที่แม่นยำ</p>
+        </div>
+
+        <!-- กราฟแนวโน้ม -->
+        <div class="card">
+            <h2>📈 กราฟแนวโน้มการนอนและน้ำดื่ม (7 วัน)</h2>
+            <div class="chart-container">
+                <canvas id="healthChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('healthChart').getContext('2d');
+    const healthChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['7 ก.ย.', '8 ก.ย.', '9 ก.ย.', '10 ก.ย.', '11 ก.ย.', '12 ก.ย.', '13 ก.ย.'],
+            datasets: [
+                {
+                    label: 'การนอน (ชม.)',
+                    data: [7.2, 6.5, 6.5, 6.5, 6.5, 6.5, 6.5],
+                    borderColor: '#9b59b6',
+                    backgroundColor: 'rgba(155, 89, 182, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    yAxisID: 'ySleep'
+                },
+                {
+                    label: 'น้ำดื่ม (ลิตร)',
+                    data: [1.8, 1.5, 1.5, 2.0, 1.5, 1.5, 1.5],
+                    borderColor: '#3498db',
+                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    yAxisID: 'yWater'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                ySleep: {
+                    type: 'linear',
+                    position: 'left',
+                    title: { display: true, text: 'ชั่วโมงการนอน' },
+                    min: 4,
+                    max: 10
+                },
+                yWater: {
+                    type: 'linear',
+                    position: 'right',
+                    title: { display: true, text: 'ปริมาณน้ำ (ลิตร)' },
+                    min: 0,
+                    max: 4,
+                    grid: { drawOnChartArea: false }
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
